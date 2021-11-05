@@ -1,14 +1,34 @@
-import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+
+import { TabView, SceneMap } from 'react-native-tab-view';
+import { Disease, News, Price } from '../../components';
+
+const renderScene = SceneMap({
+  first: Price,
+  second: News,
+  third: Disease,
+});
 
 const Home = () => {
-    return (
-        <View>
-            <Text>Home</Text>
-        </View>
-    )
-}
+  const layout = useWindowDimensions();
+  const [index, setIndex] = useState(0);
+  const [routes] = useState([
+    { key: 'first', title: 'Harga Udang' },
+    { key: 'second', title: 'Kabar Udang' },
+    { key: 'third', title: 'Penyakit' },
+  ]);
 
-export default Home
+  return (
+    <TabView
+      navigationState={{ index, routes }}
+      renderScene={renderScene}
+      onIndexChange={setIndex}
+      initialLayout={{ width: layout.width }}
+    />
+  );
+};
 
-const styles = StyleSheet.create({})
+export default Home;
+
+const styles = StyleSheet.create({});
