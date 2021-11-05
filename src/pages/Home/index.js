@@ -1,8 +1,29 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 
-import { TabView, SceneMap } from 'react-native-tab-view';
+import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import { Disease, News, Price } from '../../components';
+import Color from '../../styles/Color';
+
+const renderTabBar = (props) => (
+  <TabBar
+    {...props}
+    indicatorStyle={{ backgroundColor: Color.PRIMARY }}
+    style={{ backgroundColor: Color.WHITE }}
+    renderLabel={({ route, focused, color }) => (
+      <Text
+        style={{
+          color: focused ? Color.PRIMARY : 'rgba(115, 115, 115, 1)',
+          margin: 8,
+          fontWeight: '700',
+          fontFamily: 'Lato',
+        }}
+      >
+        {route.title}
+      </Text>
+    )}
+  />
+);
 
 const renderScene = SceneMap({
   first: Price,
@@ -21,6 +42,7 @@ const Home = () => {
 
   return (
     <TabView
+      renderTabBar={renderTabBar}
       navigationState={{ index, routes }}
       renderScene={renderScene}
       onIndexChange={setIndex}

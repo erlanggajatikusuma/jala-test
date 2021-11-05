@@ -4,47 +4,34 @@ import { Button } from '../..';
 import Color from '../../../styles/Color';
 import { Text } from '../../../uikits';
 
-const Card = () => {
+const Card = ({ supplier, verify, avatar }) => {
   return (
     <View style={styles.container}>
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          paddingBottom: 8,
-        }}
-      >
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Image
-            style={{
-              width: 32,
-              height: 32,
-              borderRadius: 32 / 2,
-              backgroundColor: 'gray',
-              marginRight: 8,
-            }}
-          />
+      <View style={[styles.center, { paddingBottom: 8 }]}>
+        <View style={styles.center}>
+          <Image source={{ uri: `https://app.jala.tech/storage/${avatar}` }} style={styles.image} />
           <View>
             <Text size={12} color={Color.SEMANTIC_DUST} style={{ fontWeight: '400' }}>
               Supplier
             </Text>
-            <Text color={Color.NEUTRAL}>Mina Udang Berkah</Text>
+            <Text color={Color.NEUTRAL}>{supplier}</Text>
           </View>
         </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            backgroundColor: Color.SEMANTIC,
-            borderRadius: 27.5,
-            padding: 3,
-          }}
-        >
-          <Image />
-          <Text size={12} color={Color.NEUTRAL}>
-            Terverifikasi
-          </Text>
-        </View>
+        {verify ? (
+          <View
+            style={{
+              flexDirection: 'row',
+              backgroundColor: Color.SEMANTIC,
+              borderRadius: 27.5,
+              padding: 3,
+            }}
+          >
+            <Image />
+            <Text size={12} color={Color.NEUTRAL}>
+              Terverifikasi
+            </Text>
+          </View>
+        ) : null}
       </View>
       {/* MIDDLE */}
       <View>
@@ -57,14 +44,7 @@ const Card = () => {
         </Text>
       </View>
       {/* BOTTOM */}
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          marginTop: 4,
-        }}
-      >
+      <View style={[styles.center, { marginTop: 4 }]}>
         <View>
           <Text size={12} color={Color.SEMANTIC_DUST} style={{ fontWeight: '400' }}>
             size 100
@@ -88,5 +68,15 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 4,
     backgroundColor: Color.WHITE,
+    marginBottom: 8,
+  },
+  center: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  image: {
+    width: 32,
+    height: 32,
+    borderRadius: 32 / 2,
+    backgroundColor: 'gray',
+    marginRight: 8,
+    resizeMode: 'cover',
   },
 });
