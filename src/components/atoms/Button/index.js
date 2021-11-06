@@ -3,10 +3,13 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import Color from '../../../styles/Color';
 import { Text } from '../../../uikits';
 
-const Button = ({ text, onPress }) => {
+const Button = ({ text, onPress, block = false, fontWeight = '400' }) => {
   return (
     <TouchableOpacity onPress={onPress} style={styles.wrapper}>
-      <Text style={{ textTransform: 'uppercase' }} color={Color.WHITE}>
+      <Text
+        style={{ textTransform: block ? 'uppercase' : 'capitalize', fontWeight: fontWeight }}
+        color={Color.WHITE}
+      >
         {text}
       </Text>
     </TouchableOpacity>

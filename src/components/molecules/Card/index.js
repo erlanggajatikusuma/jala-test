@@ -54,7 +54,7 @@ const Card = ({ supplier, verify, avatar, province, regency, price, onPress, siz
             IDR {price === validation ? 'Tidak Tersedia' : `${price}`}
           </Text>
         </View>
-        <Button text="Lihat Detail" onPress={onPress} />
+        <Button text="Lihat Detail" block onPress={onPress} />
       </View>
     </View>
   );

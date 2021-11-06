@@ -41,6 +41,8 @@ const Price = () => {
     getData();
     console.log('HEIGHT ===> ', height);
     console.log('HEADER HEIGHT ===> ', headerHeight);
+    console.log('STATUS BAR HEIGHT ===> ', StatusBar.currentHeight);
+    console.log('MODAL HEIGHT ===> ', height - (headerHeight + StatusBar.currentHeight));
   }, []);
 
   const getData = () => {
@@ -58,7 +60,6 @@ const Price = () => {
   const pickSize = (val) => {
     setSize(val);
     setModalVisible(!modalVisible);
-    const newCopy = [...priceList];
   };
 
   const onEndScroll = () => {
@@ -94,7 +95,6 @@ const Price = () => {
               avatar={item.creator.avatar}
               province={item.region.province_name}
               regency={item.region.regency_name}
-              //   price={item.size_100}
               price={item[`size_${size}`]}
               size={size}
               onPress={() => handleDetail(item)}
@@ -164,11 +164,7 @@ const Price = () => {
                 </View>
                 {sizes.map((item) => {
                   return (
-                    <TouchableOpacity
-                      key={item}
-                      style={styles.button}
-                      onPress={() => pickSize(item)}
-                    >
+                    <TouchableOpacity key={item} onPress={() => pickSize(item)}>
                       <Text style={styles.contentTitle}>{item}</Text>
                     </TouchableOpacity>
                   );
@@ -197,15 +193,10 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderColor: 'rgba(0, 0, 0, 0.1)',
   },
-  button: {
-    borderBottomWidth: 1,
-    borderColor: Color.NEUTRAL_GRAY,
-  },
   contentTitle: {
     fontSize: 16,
     marginVertical: 10,
     textTransform: 'uppercase',
-    textAlign: 'center',
     paddingVertical: 10,
   },
   container: {

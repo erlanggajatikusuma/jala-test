@@ -10,7 +10,7 @@ const Header = ({ title, back }) => {
       <TouchableOpacity onPress={back}>
         <Image source={IconArrow} style={{ width: 16, height: 16, marginRight: 16 }} />
       </TouchableOpacity>
-      <Text family="Lato" size={18} color="white">
+      <Text family="Lato" size={18} color={Color.WHITE} style={{ fontWeight: '700' }}>
         {title}
       </Text>
     </View>
