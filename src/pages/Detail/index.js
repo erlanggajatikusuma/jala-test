@@ -8,8 +8,9 @@ const Detail = ({ route }) => {
   useEffect(() => {
     console.log('DATA PROPS ===> ', data);
   }, []);
+
   return (
-    <View>
+    <View style={styles.page}>
       <Text>Detail Page</Text>
     </View>
   );

@@ -7,6 +7,8 @@ import {
   Image,
   Modal,
   TouchableWithoutFeedback,
+  useWindowDimensions,
+  StatusBar,
 } from 'react-native';
 import { Card } from '..';
 import Color from '../../../styles/Color';
@@ -16,6 +18,7 @@ import { IconBiomass, IconPinpoint } from '../../../assets';
 import { sizes } from '../../../utils';
 import { Gap } from '../..';
 import { useNavigation } from '@react-navigation/core';
+import { useHeaderHeight } from '@react-navigation/elements';
 
 const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
   const paddingToBottom = 20;
@@ -31,9 +34,13 @@ const Price = () => {
   );
 
   const navigation = useNavigation();
+  const { height, width } = useWindowDimensions();
+  const headerHeight = useHeaderHeight();
 
   useEffect(() => {
     getData();
+    console.log('HEIGHT ===> ', height);
+    console.log('HEADER HEIGHT ===> ', headerHeight);
   }, []);
 
   const getData = () => {
@@ -87,7 +94,8 @@ const Price = () => {
               avatar={item.creator.avatar}
               province={item.region.province_name}
               regency={item.region.regency_name}
-              price={item.size_100}
+              //   price={item.size_100}
+              price={item[`size_${size}`]}
               size={size}
               onPress={() => handleDetail(item)}
             />
@@ -136,25 +144,36 @@ const Price = () => {
           onPressOut={() => setModalVisible(!modalVisible)}
         >
           <TouchableWithoutFeedback>
-            <View style={styles.content}>
-              {/* HEADER */}
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text size={16} color={Color.NEUTRAL} style={{ fontWeight: '700' }}>
-                  Size
-                </Text>
-                <TouchableOpacity onPress={() => setModalVisible(!modalVisible)}>
-                  <Text color={Color.PRIMARY} style={{ fontWeight: '700' }}>
-                    Tutup
+            <View
+              style={[
+                styles.content,
+                { height: height - (headerHeight + StatusBar.currentHeight) },
+              ]}
+            >
+              <ScrollView showsVerticalScrollIndicator={false}>
+                {/* HEADER */}
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <Text size={16} color={Color.NEUTRAL} style={{ fontWeight: '700' }}>
+                    Size
                   </Text>
-                </TouchableOpacity>
-              </View>
-              {sizes.map((item) => {
-                return (
-                  <TouchableOpacity key={item} style={styles.button} onPress={() => pickSize(item)}>
-                    <Text style={styles.contentTitle}>{item}</Text>
+                  <TouchableOpacity onPress={() => setModalVisible(!modalVisible)}>
+                    <Text color={Color.PRIMARY} style={{ fontWeight: '700' }}>
+                      Tutup
+                    </Text>
                   </TouchableOpacity>
-                );
-              })}
+                </View>
+                {sizes.map((item) => {
+                  return (
+                    <TouchableOpacity
+                      key={item}
+                      style={styles.button}
+                      onPress={() => pickSize(item)}
+                    >
+                      <Text style={styles.contentTitle}>{item}</Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </ScrollView>
             </View>
           </TouchableWithoutFeedback>
         </TouchableOpacity>
@@ -175,8 +194,6 @@ const styles = StyleSheet.create({
     backgroundColor: Color.WHITE,
     paddingHorizontal: 16,
     paddingVertical: 20,
-    height: 190,
-    // justifyContent: 'center',
     borderRadius: 16,
     borderColor: 'rgba(0, 0, 0, 0.1)',
   },
@@ -207,8 +224,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     flexDirection: 'row',
     bottom: 0,
-    right: 19,
-    left: 19,
+    right: 12,
+    left: 12,
     marginBottom: 8,
   },
   floatButton: (size) => ({

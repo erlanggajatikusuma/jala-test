@@ -6,6 +6,7 @@ import Color from '../../../styles/Color';
 import { Text } from '../../../uikits';
 
 const Card = ({ supplier, verify, avatar, province, regency, price, onPress, size }) => {
+  const validation = 0 || null;
   return (
     <View style={styles.container}>
       <View style={[styles.center, { paddingBottom: 8 }]}>
@@ -50,7 +51,7 @@ const Card = ({ supplier, verify, avatar, province, regency, price, onPress, siz
             size {size}
           </Text>
           <Text size={22} style={{ fontWeight: '900' }}>
-            IDR {price}
+            IDR {price === validation ? 'Tidak Tersedia' : `${price}`}
           </Text>
         </View>
         <Button text="Lihat Detail" onPress={onPress} />
