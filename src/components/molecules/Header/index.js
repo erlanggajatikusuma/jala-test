@@ -1,11 +1,14 @@
 import React from 'react';
-import { Image, StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { IconArrow } from '../../../assets';
 import { Text } from '../../../uikits';
 
 const Header = () => {
   return (
     <View style={styles.header}>
-      <Image source={null} style={{ width: 16, height: 16, backgroundColor: 'gray' }} />
+      <TouchableOpacity>
+        <Image source={IconArrow} style={{ width: 16, height: 16, marginRight: 16 }} />
+      </TouchableOpacity>
       <Text family="Lato" size={18} color="white">
         Jala Media
       </Text>

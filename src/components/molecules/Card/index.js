@@ -1,10 +1,11 @@
 import React from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 import { Button } from '../..';
+import { IconVerify } from '../../../assets';
 import Color from '../../../styles/Color';
 import { Text } from '../../../uikits';
 
-const Card = ({ supplier, verify, avatar }) => {
+const Card = ({ supplier, verify, avatar, province, regency, price, onPress, size }) => {
   return (
     <View style={styles.container}>
       <View style={[styles.center, { paddingBottom: 8 }]}>
@@ -18,42 +19,41 @@ const Card = ({ supplier, verify, avatar }) => {
           </View>
         </View>
         {verify ? (
-          <View
-            style={{
-              flexDirection: 'row',
-              backgroundColor: Color.SEMANTIC,
-              borderRadius: 27.5,
-              padding: 3,
-            }}
-          >
-            <Image />
-            <Text size={12} color={Color.NEUTRAL}>
+          <View style={styles.verifyWrapper(verify)}>
+            <Image source={IconVerify} />
+            <Text size={12} color={Color.NEUTRAL} style={{ marginLeft: 3 }}>
               Terverifikasi
             </Text>
           </View>
-        ) : null}
+        ) : (
+          <View style={styles.verifyWrapper(verify)}>
+            <Text size={12} color={Color.NEUTRAL}>
+              belum terverifikasi
+            </Text>
+          </View>
+        )}
       </View>
       {/* MIDDLE */}
       <View>
         <Text size={12}>16 Januari 2021</Text>
         <Text size={12} color={Color.NEUTRAL}>
-          Nusa Tenggara Barat
+          {province}
         </Text>
         <Text size={18} style={{ fontWeight: '700' }}>
-          Sumba
+          {regency}
         </Text>
       </View>
       {/* BOTTOM */}
       <View style={[styles.center, { marginTop: 4 }]}>
         <View>
           <Text size={12} color={Color.SEMANTIC_DUST} style={{ fontWeight: '400' }}>
-            size 100
+            size {size}
           </Text>
           <Text size={22} style={{ fontWeight: '900' }}>
-            IDR 56.500
+            IDR {price}
           </Text>
         </View>
-        <Button text="Lihat Detail" />
+        <Button text="Lihat Detail" onPress={onPress} />
       </View>
     </View>
   );
@@ -79,4 +79,12 @@ const styles = StyleSheet.create({
     marginRight: 8,
     resizeMode: 'cover',
   },
+  verifyWrapper: (verify) => ({
+    flexDirection: verify ? 'row' : 'column',
+    backgroundColor: verify ? Color.SEMANTIC : Color.NEUTRAL_GRAY,
+    paddingHorizontal: verify ? 4 : 8,
+    paddingVertical: 3,
+    borderRadius: 27.5,
+    padding: 3,
+  }),
 });
