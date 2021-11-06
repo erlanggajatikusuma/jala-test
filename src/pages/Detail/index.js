@@ -95,9 +95,9 @@ const Detail = ({ route }) => {
               Daftar Harga
             </Text>
             {sizes.map((item) => (
-              <View style={{ flexDirection: 'row' }}>
+              <View key={item} style={{ flexDirection: 'row' }}>
                 <Text style={{ width: 80, marginRight: 8 }}>Size {item}</Text>
-                <Text key={item}>{data[`size_${item}`]}</Text>
+                <Text>{data[`size_${item}`]}</Text>
               </View>
             ))}
           </View>
