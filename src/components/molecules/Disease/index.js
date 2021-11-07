@@ -32,6 +32,11 @@ const Disease = () => {
 
   return (
     <View style={styles.page}>
+      <View style={styles.title}>
+        <Text size={18} color="rgba(0, 68, 146, 1)" style={{ fontWeight: '700' }}>
+          Daftar Penyakit
+        </Text>
+      </View>
       <ScrollView>
         {diseases.map((disease) => {
           return (
@@ -55,5 +60,9 @@ const styles = StyleSheet.create({
     backgroundColor: Color.WHITE,
     flex: 1,
     paddingHorizontal: 16,
+  },
+  title: {
+    marginTop: 14,
+    marginBottom: 8,
   },
 });

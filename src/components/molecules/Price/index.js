@@ -1,24 +1,22 @@
-import React, { useEffect, useState } from 'react';
-import {
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-  Image,
-  Modal,
-  TouchableWithoutFeedback,
-  useWindowDimensions,
-  StatusBar,
-} from 'react-native';
-import { Card } from '..';
-import Color from '../../../styles/Color';
-import { Text } from '../../../uikits';
-import Axios from 'axios';
-import { IconBiomass, IconPinpoint } from '../../../assets';
-import { sizes } from '../../../utils';
-import { Gap } from '../..';
 import { useNavigation } from '@react-navigation/core';
 import { useHeaderHeight } from '@react-navigation/elements';
+import Axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import {
+  Image,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
+} from 'react-native';
+import { Card } from '..';
+import { Gap } from '../..';
+import { IconBiomass, IconPinpoint } from '../../../assets';
+import Color from '../../../styles/Color';
+import { Text } from '../../../uikits';
+import Modal from '../Modal';
 
 const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
   const paddingToBottom = 20;
@@ -29,6 +27,7 @@ const Price = () => {
   const [priceList, setPriceList] = useState([]);
   const [size, setSize] = useState(100);
   const [modalVisible, setModalVisible] = useState(false);
+  const [modalSearch, setModalSearch] = useState(false);
   const [url, setUrl] = useState(
     'https://app.jala.tech/api/shrimp_prices?per_page=15&page=1&with=region,creator&region_id=',
   );
@@ -51,15 +50,32 @@ const Price = () => {
         const resdata = res.data;
         console.log('RES PRICE ===> ', res.data);
         setPriceList(resdata.data);
+        // resdata.data.map((item) => {
+        //   console.log('REGION ===> ', item.region.full_name);
+        // });
       })
       .catch((err) => {
         console.log('ERR ===> ', err);
       });
   };
 
-  const pickSize = (val) => {
-    setSize(val);
+  const pickSize = (value) => {
+    setSize(value);
     setModalVisible(!modalVisible);
+  };
+
+  const onFilterRegion = (value) => {
+    const urlId = `https://app.jala.tech/api/shrimp_prices?per_page=15&page=1&with=region,creator&region_id=${value.region.id}`;
+    console.log('REGION ===> ', urlId);
+    console.log('REGION ===> ', value);
+    Axios.get(urlId)
+      .then((res) => {
+        const resdata = res.data;
+        console.log('RES REGION ===> ', res.data);
+      })
+      .catch((err) => {
+        console.log('ERR ===> ', err);
+      });
   };
 
   const onEndScroll = () => {
@@ -121,7 +137,11 @@ const Price = () => {
             </Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity activeOpacity={0.8} style={styles.floatButton(false)}>
+        <TouchableOpacity
+          onPress={() => setModalSearch(!modalSearch)}
+          activeOpacity={0.8}
+          style={styles.floatButton(false)}
+        >
           <Image source={IconPinpoint} style={{ width: 24, height: 24, marginRight: 12 }} />
           <View>
             <Text size={16} color={Color.WHITE} style={{ fontWeight: '700' }}>
@@ -133,47 +153,17 @@ const Price = () => {
 
       {/* MODAL */}
       <Modal
-        animationType={'fade'}
-        transparent={true}
-        visible={modalVisible}
-        statusBarTranslucent={true}
-      >
-        <TouchableOpacity
-          activeOpacity={1}
-          style={styles.view}
-          onPressOut={() => setModalVisible(!modalVisible)}
-        >
-          <TouchableWithoutFeedback>
-            <View
-              style={[
-                styles.content,
-                { height: height - (headerHeight + StatusBar.currentHeight) },
-              ]}
-            >
-              <ScrollView showsVerticalScrollIndicator={false}>
-                {/* HEADER */}
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                  <Text size={16} color={Color.NEUTRAL} style={{ fontWeight: '700' }}>
-                    Size
-                  </Text>
-                  <TouchableOpacity onPress={() => setModalVisible(!modalVisible)}>
-                    <Text color={Color.PRIMARY} style={{ fontWeight: '700' }}>
-                      Tutup
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-                {sizes.map((item) => {
-                  return (
-                    <TouchableOpacity key={item} onPress={() => pickSize(item)}>
-                      <Text style={styles.contentTitle}>{item}</Text>
-                    </TouchableOpacity>
-                  );
-                })}
-              </ScrollView>
-            </View>
-          </TouchableWithoutFeedback>
-        </TouchableOpacity>
-      </Modal>
+        show={modalVisible}
+        close={() => setModalVisible(!modalVisible)}
+        picked={(val) => pickSize(val)}
+      />
+      <Modal
+        type="search"
+        show={modalSearch}
+        close={() => setModalSearch(!modalSearch)}
+        picked={(val) => onFilterRegion(val)}
+        data={priceList}
+      />
     </View>
   );
 };

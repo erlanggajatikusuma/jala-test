@@ -2,6 +2,7 @@ import Axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import Color from '../../../styles/Color';
+import { Text } from '../../../uikits';
 import CardList from '../CardList';
 
 const News = () => {
@@ -33,6 +34,11 @@ const News = () => {
 
   return (
     <View style={styles.page}>
+      <View style={styles.title}>
+        <Text size={18} color="rgba(0, 68, 146, 1)" style={{ fontWeight: '700' }}>
+          Kabar Terbaru
+        </Text>
+      </View>
       <ScrollView>
         {listNews.map((news) => (
           <CardList
@@ -54,5 +60,9 @@ const styles = StyleSheet.create({
     backgroundColor: Color.WHITE,
     flex: 1,
     paddingHorizontal: 16,
+  },
+  title: {
+    marginTop: 14,
+    marginBottom: 8,
   },
 });

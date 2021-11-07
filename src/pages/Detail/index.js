@@ -4,7 +4,7 @@ import { IconVerified } from '../../assets';
 import { Button } from '../../components';
 import Color from '../../styles/Color';
 import { Text } from '../../uikits';
-import { sizes } from '../../utils';
+import { formatRupiah, sizes } from '../../utils';
 
 const Detail = ({ route }) => {
   const { data } = route.params;
@@ -97,7 +97,12 @@ const Detail = ({ route }) => {
             {sizes.map((item) => (
               <View key={item} style={{ flexDirection: 'row' }}>
                 <Text style={{ width: 80, marginRight: 8 }}>Size {item}</Text>
-                <Text>{data[`size_${item}`]}</Text>
+                {/* <Text>{data[`size_${item}`]}</Text> */}
+                <Text>
+                  {data[`size_${item}`] !== null
+                    ? `Rp ${formatRupiah(data[`size_${item}`])}`
+                    : data[`size_${item}`]}
+                </Text>
               </View>
             ))}
           </View>

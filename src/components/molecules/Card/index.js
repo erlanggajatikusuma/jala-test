@@ -4,6 +4,7 @@ import { Button } from '../..';
 import { IconVerify } from '../../../assets';
 import Color from '../../../styles/Color';
 import { Text } from '../../../uikits';
+import { formatRupiah } from '../../../utils';
 
 const Card = ({ supplier, verify, avatar, province, regency, price, onPress, size }) => {
   const validation = 0 || null;
@@ -51,7 +52,7 @@ const Card = ({ supplier, verify, avatar, province, regency, price, onPress, siz
             size {size}
           </Text>
           <Text size={22} style={{ fontWeight: '900' }}>
-            IDR {price === validation ? 'Tidak Tersedia' : `${price}`}
+            IDR {price === validation ? 'Tidak Tersedia' : `${formatRupiah(price)}`}
           </Text>
         </View>
         <Button text="Lihat Detail" block onPress={onPress} />

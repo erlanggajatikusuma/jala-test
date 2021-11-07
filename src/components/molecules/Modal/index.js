@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   StyleSheet,
-  Text,
   View,
   Modal as ModalNative,
   TouchableOpacity,
@@ -13,10 +12,16 @@ import {
 import Color from '../../../styles/Color';
 import { sizes } from '../../../utils';
 import { useHeaderHeight } from '@react-navigation/elements';
+import { Text } from '../../../uikits';
+import Search from './search';
 
-const Modal = ({ show, setSize, close }) => {
+const Modal = ({ show, picked, close, type = 'size', data }) => {
   const { height, width } = useWindowDimensions();
   const headerHeight = useHeaderHeight();
+
+  if (type === 'search') {
+    return <Search show={show} close={close} data={data} picked={picked} />;
+  }
 
   return (
     <ModalNative
@@ -30,22 +35,21 @@ const Modal = ({ show, setSize, close }) => {
           <View
             style={[styles.content, { height: height - (headerHeight + StatusBar.currentHeight) }]}
           >
-            <ScrollView showsVerticalScrollIndicator={false}>
-              {/* HEADER */}
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text size={16} color={Color.NEUTRAL} style={{ fontWeight: '700' }}>
-                  Size
+            {/* HEADER */}
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              <Text size={16} color={Color.NEUTRAL} style={{ fontWeight: '700' }}>
+                Size
+              </Text>
+              <TouchableOpacity onPress={close}>
+                <Text color={Color.PRIMARY} style={{ fontWeight: '700' }}>
+                  Tutup
                 </Text>
-                <TouchableOpacity onPress={close}>
-                  <Text color={Color.PRIMARY} style={{ fontWeight: '700' }}>
-                    Tutup
-                  </Text>
-                </TouchableOpacity>
-              </View>
+              </TouchableOpacity>
+            </View>
+            <ScrollView showsVerticalScrollIndicator={false}>
               {sizes.map((item) => {
                 return (
-                  //   <TouchableOpacity key={item} onPress={() => pickSize(item)}>
-                  <TouchableOpacity key={item} onPress={() => setSize(item)}>
+                  <TouchableOpacity key={item} onPress={() => picked(item)}>
                     <Text style={styles.contentTitle}>{item}</Text>
                   </TouchableOpacity>
                 );
