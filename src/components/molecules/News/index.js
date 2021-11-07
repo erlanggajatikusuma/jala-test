@@ -1,12 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { Image, ScrollView, StyleSheet, TouchableOpacity, View, Share } from 'react-native';
+import { useNavigation } from '@react-navigation/core';
 import Axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { IconShare } from '../../../assets';
 import Color from '../../../styles/Color';
 import { Text } from '../../../uikits';
-import { IconShare } from '../../../assets';
+import { handleShare } from '../../../utils';
 
 const News = () => {
   const [listNews, setListNews] = useState([]);
+
+  const navigation = useNavigation();
+
   useEffect(() => {
     console.log('GET NEWS');
     getNews();
@@ -31,26 +36,6 @@ const News = () => {
       });
   };
 
-  const handleShare = async (id) => {
-    const urlShare = `https://app.jala.tech/posts/${id}`;
-    try {
-      const result = await Share.share({
-        message: urlShare,
-      });
-      if (result.action === Share.sharedAction) {
-        if (result.activityType) {
-          // shared with activity type of result.activityType
-        } else {
-          // shared
-        }
-      } else if (result.action === Share.dismissedAction) {
-        // dismissed
-      }
-    } catch (error) {
-      // alert(error.message);
-      console.log('ERR SHARE ===> ', error.message);
-    }
-  };
   return (
     <View style={styles.page}>
       <ScrollView>
@@ -60,7 +45,10 @@ const News = () => {
               source={{ uri: `https://app.jala.tech/storage/${news.image}` }}
               style={styles.img}
             />
-            <View style={styles.cardBody}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('NewsDetail', { data: news })}
+              style={styles.cardBody}
+            >
               <Text size={18} color={Color.NEUTRAL} style={{ fontWeight: '900' }}>
                 {news.title}
               </Text>
@@ -80,11 +68,14 @@ const News = () => {
                 }}
               >
                 <Text>{news.updated_at}</Text>
-                <TouchableOpacity activeOpacity={0.5} onPress={() => handleShare(news.id)}>
+                <TouchableOpacity
+                  activeOpacity={0.5}
+                  onPress={() => handleShare(`https://app.jala.tech/posts/${news.id}`)}
+                >
                   <Image source={IconShare} />
                 </TouchableOpacity>
               </View>
-            </View>
+            </TouchableOpacity>
           </View>
         ))}
       </ScrollView>

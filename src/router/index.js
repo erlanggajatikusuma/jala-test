@@ -2,7 +2,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 import { StatusBar, View } from 'react-native';
 import { Header } from '../components';
-import { Detail, Home, Splash } from '../pages';
+import { Detail, Home, NewsDetail, Splash } from '../pages';
 import Color from '../styles/Color';
 
 const Stack = createNativeStackNavigator();
@@ -15,13 +15,14 @@ const App = () => {
       <Stack.Screen
         name="Home"
         component={Home}
-        options={{ header: () => <Header title="Jala Media" /> }}
+        options={{ header: () => <Header title="Jala Media" share={false} /> }}
       />
       <Stack.Screen
         name="Detail"
         component={Detail}
         options={{ header: () => <Header title="Harga Udang" /> }}
       />
+      <Stack.Screen name="NewsDetail" component={NewsDetail} options={{ headerShown: false }} />
     </Stack.Navigator>
   );
 };
