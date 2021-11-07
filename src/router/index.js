@@ -2,7 +2,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 import { StatusBar, View } from 'react-native';
 import { Header } from '../components';
-import { Detail, Home, NewsDetail, Splash } from '../pages';
+import { Detail, DiseaseDetail, Home, NewsDetail, Splash } from '../pages';
 import Color from '../styles/Color';
 
 const Stack = createNativeStackNavigator();
@@ -23,6 +23,11 @@ const App = () => {
         options={{ header: () => <Header title="Harga Udang" /> }}
       />
       <Stack.Screen name="NewsDetail" component={NewsDetail} options={{ headerShown: false }} />
+      <Stack.Screen
+        name="DiseaseDetail"
+        component={DiseaseDetail}
+        options={{ headerShown: false }}
+      />
     </Stack.Navigator>
   );
 };

@@ -1,11 +1,14 @@
 import React from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { Text } from '../../../uikits';
 
 const Loading = () => {
   return (
     <View style={styles.container}>
       <ActivityIndicator size="large" color="#1ABC9C" />
-      <Text style={styles.text}>Loading...</Text>
+      <Text size={18} style={{ marginTop: 12 }}>
+        Loading...
+      </Text>
     </View>
   );
 };
@@ -22,5 +25,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  text: { fontSize: 18, fontFamily: 'Poppins-Regular', marginTop: 12 },
 });

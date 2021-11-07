@@ -1,22 +1,22 @@
 import React, { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
+import { Text } from '../../uikits';
 import { WebView } from 'react-native-webview';
 import { Header, Loading } from '../../components';
 import { handleShare } from '../../utils';
 
-const NewsDetail = ({ navigation, route }) => {
+const DiseaseDetail = ({ navigation, route }) => {
   const { data } = route.params;
 
   useEffect(() => {
-    console.log('NEWS PARAM ===> ', data);
+    console.log('DISEASE PARAMS ====> ', data);
   }, []);
-
   return (
     <>
       <Header
-        title="Kabar Udang"
+        title="Info Penyakit"
         back={() => navigation.goBack()}
-        onPress={() => handleShare(`https://app.jala.tech/web_view/posts/${data.id}`)}
+        onPress={() => handleShare(`https://app.jala.tech/web_view/diseases/${data.id}`)}
       />
       <View
         style={{
@@ -30,7 +30,7 @@ const NewsDetail = ({ navigation, route }) => {
         <WebView
           startInLoadingState={true}
           renderLoading={() => <Loading />}
-          source={{ uri: `https://app.jala.tech/web_view/posts/${data.id}` }}
+          source={{ uri: `https://app.jala.tech/web_view/diseases/${data.id}` }}
           style={{ flex: 1 }}
         />
       </View>
@@ -38,6 +38,6 @@ const NewsDetail = ({ navigation, route }) => {
   );
 };
 
-export default NewsDetail;
+export default DiseaseDetail;
 
 const styles = StyleSheet.create({});
