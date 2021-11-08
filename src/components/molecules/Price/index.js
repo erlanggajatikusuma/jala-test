@@ -1,29 +1,24 @@
 import { useNavigation } from '@react-navigation/core';
-import { useHeaderHeight } from '@react-navigation/elements';
 import Axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import {
-  Image,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  TouchableOpacity,
-  useWindowDimensions,
-  View,
-} from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Card } from '..';
-import { Gap } from '../..';
+import { Button, Gap } from '../..';
 import { IconBiomass, IconPinpoint } from '../../../assets';
 import Color from '../../../styles/Color';
 import { Text } from '../../../uikits';
 import Modal from '../Modal';
 
-const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
-  const paddingToBottom = 20;
-  return layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
-};
-
 const Price = () => {
+  const [state, setState] = useState({
+    links: {
+      first: '',
+      last: '',
+      next: '',
+      prev: null,
+    },
+    currentPage: 1,
+  });
   const [priceList, setPriceList] = useState([]);
   const [size, setSize] = useState(100);
   const [modalVisible, setModalVisible] = useState(false);
@@ -33,26 +28,20 @@ const Price = () => {
   );
 
   const navigation = useNavigation();
-  const { height, width } = useWindowDimensions();
-  const headerHeight = useHeaderHeight();
+  const scrollRef = useRef();
 
   useEffect(() => {
-    getData();
-    console.log('HEIGHT ===> ', height);
-    console.log('HEADER HEIGHT ===> ', headerHeight);
-    console.log('STATUS BAR HEIGHT ===> ', StatusBar.currentHeight);
-    console.log('MODAL HEIGHT ===> ', height - (headerHeight + StatusBar.currentHeight));
+    getData(url);
   }, []);
 
-  const getData = () => {
-    Axios.get(url)
+  const getData = (urlLink) => {
+    // SET LOADING
+    Axios.get(urlLink)
       .then((res) => {
         const resdata = res.data;
         console.log('RES PRICE ===> ', res.data);
         setPriceList(resdata.data);
-        // resdata.data.map((item) => {
-        //   console.log('REGION ===> ', item.region.full_name);
-        // });
+        setState({ ...state, links: resdata.links, currentPage: resdata.meta.current_page });
       })
       .catch((err) => {
         console.log('ERR ===> ', err);
@@ -78,30 +67,32 @@ const Price = () => {
       });
   };
 
-  const onEndScroll = () => {
-    console.log('END SCROLLL');
-  };
-
   const handleDetail = (value) => {
     navigation.navigate('Detail', { data: value });
   };
 
+  const handleButton = (value) => {
+    console.log('BUTTON PREV NEXT ===> ', value);
+    if (value === 'next') {
+      getData(state.links.next);
+    }
+    if (value === 'prev') {
+      getData(state.links.prev);
+    }
+    scrollRef.current?.scrollTo({
+      y: 0,
+      animated: true,
+    });
+  };
+
   return (
     <View style={styles.container}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        onScroll={({ nativeEvent }) => {
-          if (isCloseToBottom(nativeEvent)) {
-            onEndScroll();
-          }
-        }}
-        scrollEventThrottle={400}
-      >
-        <View style={styles.title}>
-          <Text size={18} color="rgba(0, 68, 146, 1)" style={{ fontWeight: '700' }}>
-            Harga Terbaru
-          </Text>
-        </View>
+      <View style={styles.title}>
+        <Text size={18} color="rgba(0, 68, 146, 1)" style={{ fontWeight: '700' }}>
+          Harga Terbaru
+        </Text>
+      </View>
+      <ScrollView ref={scrollRef} showsVerticalScrollIndicator={false}>
         {priceList.map((item) => {
           return (
             <Card
@@ -118,6 +109,14 @@ const Price = () => {
           );
         })}
 
+        {/* Button Navigation */}
+        <Gap height={20} />
+        <Button
+          type="navigation"
+          nav={{ prev: state.links.prev, next: state.links.next }}
+          text={state.currentPage}
+          onPress={(val) => handleButton(val)}
+        />
         <Gap height={100} />
       </ScrollView>
       {/* FLOAT BUTTON */}

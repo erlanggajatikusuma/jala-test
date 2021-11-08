@@ -4,7 +4,7 @@ import { IconVerified } from '../../assets';
 import { Button } from '../../components';
 import Color from '../../styles/Color';
 import { Text } from '../../uikits';
-import { formatRupiah, sizes } from '../../utils';
+import { formatRupiah, getDate, sizes } from '../../utils';
 
 const Detail = ({ route }) => {
   const { data } = route.params;
@@ -31,6 +31,8 @@ const Detail = ({ route }) => {
       .catch((err) => console.log(err));
   };
 
+  // share button on header stack
+
   return (
     <View style={styles.page}>
       <ScrollView>
@@ -46,7 +48,7 @@ const Detail = ({ route }) => {
         {/* BODY */}
         <View style={styles.body}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Text>16 Januari 2020</Text>
+            <Text>{getDate(data.updated_at)}</Text>
             {data.creator.buyer ? (
               <View style={styles.verifyWrapper(data.creator.buyer)}>
                 <Image source={IconVerified} />

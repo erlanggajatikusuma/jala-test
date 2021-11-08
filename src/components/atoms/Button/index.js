@@ -1,9 +1,13 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 import Color from '../../../styles/Color';
 import { Text } from '../../../uikits';
+import Navigate from './navigate';
 
-const Button = ({ text, onPress, block = false, fontWeight = '400' }) => {
+const Button = ({ text, onPress, block = false, fontWeight = '400', type = 'normal', nav }) => {
+  if (type === 'navigation') {
+    return <Navigate onPress={(val) => onPress(val)} currentPage={text} nav={nav} />;
+  }
   return (
     <TouchableOpacity onPress={onPress} style={styles.wrapper}>
       <Text
