@@ -5,6 +5,7 @@ export const API_HOST = {
     'https://app.jala.tech/api/shrimp_prices?per_page=15&page=1&with=region,creator&region_id=',
   news: 'https://app.jala.tech/api/posts?per_page=15&page=1&with=creator',
   diseases: 'https://app.jala.tech/api/diseases?per_page=15&page=1',
+  search: 'https://app.jala.tech/api/regions?has=shrimp_prices&search=',
 };
 
 export const token =

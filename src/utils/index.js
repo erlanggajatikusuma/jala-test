@@ -1,4 +1,4 @@
-import { Share } from 'react-native';
+import { Share, ToastAndroid } from 'react-native';
 
 export const sizes = [
   20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200,
@@ -105,4 +105,8 @@ export const formatRupiah = (num) => {
   ribuan = ribuan.join('.').split('').reverse().join('');
 
   return ribuan;
+};
+
+export const showToastWithGravity = (message) => {
+  ToastAndroid.showWithGravity(message, ToastAndroid.SHORT, ToastAndroid.TOP);
 };

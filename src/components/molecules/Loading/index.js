@@ -18,7 +18,7 @@ export default Loading;
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(0,0,0,0.1)',
     flex: 1,
     width: '100%',
     height: '100%',

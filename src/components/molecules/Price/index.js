@@ -1,13 +1,12 @@
 import { useNavigation } from '@react-navigation/core';
-import Axios from 'axios';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Image,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
   View,
-  RefreshControl,
 } from 'react-native';
 import { Card } from '..';
 import { Button, Gap } from '../..';
@@ -15,6 +14,7 @@ import { API_HOST, getData } from '../../../api';
 import { IconBiomass, IconPinpoint } from '../../../assets';
 import Color from '../../../styles/Color';
 import { Text } from '../../../uikits';
+import { showToastWithGravity } from '../../../utils';
 import Modal from '../Modal';
 
 const Price = () => {
@@ -28,6 +28,7 @@ const Price = () => {
     link: {},
     currentPage: 1,
     region: 'Indonesia',
+    listRegion: [],
   });
   const [priceList, setPriceList] = useState([]);
   const [size, setSize] = useState(100);
@@ -35,6 +36,7 @@ const Price = () => {
   const [modalSearch, setModalSearch] = useState(false);
   const [listRegion, setListRegion] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [text, onChangeText] = useState('');
 
   const navigation = useNavigation();
   const scrollRef = useRef();
@@ -42,20 +44,15 @@ const Price = () => {
   useEffect(() => {
     getData(API_HOST.prices)
       .then((res) => {
-        console.log('PROMISE RES PRICES ==> ', res.data);
         const resdata = res.data;
         setPriceList(resdata.data);
-        setListRegion(resdata.data);
         setState({
           ...state,
           links: resdata.links,
-          link: resdata.links,
           currentPage: resdata.meta.current_page,
         });
       })
-      .catch((err) => {
-        console.log('ERR GET PRICES ===> ', err);
-      });
+      .catch((err) => showToastWithGravity(err.message));
   }, []);
 
   const onRefresh = useCallback(() => {
@@ -87,18 +84,16 @@ const Price = () => {
   };
 
   const onFilterRegion = (value) => {
-    const urlId = `${API_HOST.prices}${value.region.id}`;
-    console.log('REGION ===> ', value);
-    Axios.get(urlId)
+    const urlId = `${API_HOST.prices}${value.id}`;
+    getData(urlId)
       .then((res) => {
         const resdata = res.data;
-        console.log('FILTER REGION ===> ', res.data);
         setPriceList(resdata.data);
         setState({
           ...state,
           links: resdata.links,
           currentPage: resdata.meta.current_page,
-          region: value.region.name,
+          region: value.name,
         });
         setModalSearch(!modalSearch);
         scrollRef.current?.scrollTo({
@@ -106,9 +101,7 @@ const Price = () => {
           animated: true,
         });
       })
-      .catch((err) => {
-        console.log('ERR ===> ', err);
-      });
+      .catch((err) => showToastWithGravity(err.message));
   };
 
   const handleDetail = (value) => {
@@ -116,7 +109,6 @@ const Price = () => {
   };
 
   const handleButton = (value) => {
-    console.log('BUTTON PREV NEXT ===> ', value);
     if (value === 'next') {
       getData(state.links.next)
         .then((res) => {
@@ -124,7 +116,7 @@ const Price = () => {
           setPriceList(resdata.data);
           setState({ ...state, links: resdata.links, currentPage: resdata.meta.current_page });
         })
-        .catch((err) => console.log('ERR GET PRICES ===> ', err));
+        .catch((err) => showToastWithGravity(err.message));
     }
     if (value === 'prev') {
       getData(state.links.prev)
@@ -133,7 +125,7 @@ const Price = () => {
           setPriceList(resdata.data);
           setState({ ...state, links: resdata.links, currentPage: resdata.meta.current_page });
         })
-        .catch((err) => console.log('ERR GET PRICES ===> ', err));
+        .catch((err) => showToastWithGravity(err.message));
     }
     scrollRef.current?.scrollTo({
       y: 0,
@@ -144,7 +136,6 @@ const Price = () => {
   const onEndScroll = (value) => {
     getData(state.link.next)
       .then((res) => {
-        console.log('END SCROLL ==> ', res.data);
         const resdata = res.data;
         setState({ ...state, link: resdata.links });
         const newCopy = [...listRegion];
@@ -153,9 +144,40 @@ const Price = () => {
         });
         setListRegion(newCopy);
       })
-      .catch((err) => {
-        console.log('ERR GET PRICES ===> ', err);
-      });
+      .catch((err) => showToastWithGravity(err.message));
+  };
+
+  const onFilter = () => {
+    setModalSearch(!modalSearch);
+    getData(API_HOST.search)
+      .then((res) => {
+        const resdata = res.data;
+        setListRegion(resdata.data);
+        setState({ ...state, link: resdata.links, listRegion: resdata.data });
+      })
+      .catch((err) => showToastWithGravity(err.message));
+  };
+
+  const handleSearch = (val) => {
+    const copyArr = [...state.listRegion];
+    const newFill = copyArr.filter((value) => value.name.toLowerCase().match(val.toLowerCase()));
+    setListRegion(newFill);
+    onChangeText(val);
+  };
+
+  const onSubmitSearch = () => {
+    const url = `${API_HOST.search}${text}`;
+    getData(url)
+      .then((res) => {
+        const resdata = res.data;
+        setListRegion(resdata.data);
+      })
+      .catch((err) => showToastWithGravity(err.message));
+  };
+
+  const handleDelete = () => {
+    console.log('DELETE INPUT');
+    onChangeText('');
   };
 
   return (
@@ -213,11 +235,7 @@ const Price = () => {
             </Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => setModalSearch(!modalSearch)}
-          activeOpacity={0.8}
-          style={styles.floatButton(false)}
-        >
+        <TouchableOpacity onPress={onFilter} activeOpacity={0.8} style={styles.floatButton(false)}>
           <Image source={IconPinpoint} style={{ width: 24, height: 24, marginRight: 12 }} />
           <View>
             <Text size={16} color={Color.WHITE} style={{ fontWeight: '700' }}>
@@ -240,6 +258,10 @@ const Price = () => {
         picked={(val) => onFilterRegion(val)}
         data={listRegion}
         endScroll={(val) => onEndScroll(val)}
+        value={text}
+        onChangeText={(val) => handleSearch(val)}
+        onPress={handleDelete}
+        onSubmitEditing={onSubmitSearch}
       />
     </View>
   );

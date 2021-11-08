@@ -15,7 +15,18 @@ import { useHeaderHeight } from '@react-navigation/elements';
 import { Text } from '../../../uikits';
 import Search from './search';
 
-const Modal = ({ show, picked, close, type = 'size', data, endScroll }) => {
+const Modal = ({
+  show,
+  picked,
+  close,
+  type = 'size',
+  data,
+  endScroll,
+  value,
+  onChangeText,
+  onPress,
+  onSubmitEditing,
+}) => {
   const { height, width } = useWindowDimensions();
   const headerHeight = useHeaderHeight();
 
@@ -27,6 +38,10 @@ const Modal = ({ show, picked, close, type = 'size', data, endScroll }) => {
         data={data}
         picked={picked}
         endScroll={(val) => endScroll(val)}
+        value={value}
+        onChangeText={onChangeText}
+        onPress={onPress}
+        onSubmitEditing={onSubmitEditing}
       />
     );
   }
