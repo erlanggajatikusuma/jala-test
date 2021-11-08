@@ -11,22 +11,19 @@ import {
 import Color from '../../../styles/Color';
 import { Text } from '../../../uikits';
 
-const Search = ({ close, show, data, picked }) => {
+const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
+  const paddingToBottom = 20;
+  return layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
+};
+
+const Search = ({ close, show, data, picked, endScroll }) => {
   return (
     <Modal animationType={'fade'} transparent={true} visible={show} statusBarTranslucent={true}>
       <TouchableOpacity activeOpacity={1} style={styles.view} onPressOut={close}>
         <TouchableWithoutFeedback>
           <View style={[styles.content, { height: 464 }]}>
             {/* HEADER */}
-            <View
-              style={{
-                backgroundColor: 'white',
-                paddingHorizontal: 16,
-                paddingBottom: 10,
-                borderBottomWidth: 1,
-                borderColor: Color.NEUTRAL_GRAY,
-              }}
-            >
+            <View style={styles.header}>
               <View
                 style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 }}
               >
@@ -44,19 +41,20 @@ const Search = ({ close, show, data, picked }) => {
                 <TextInput
                   placeholder="Cari"
                   placeholderTextColor="rgba(160, 158, 158, 1)"
-                  style={{
-                    borderWidth: 1,
-                    borderRadius: 4,
-                    borderColor: Color.NEUTRAL_GRAY,
-                    paddingVertical: 6,
-                    paddingHorizontal: 11,
-                    color: '#000',
-                    backgroundColor: 'rgba(245, 246, 247, 1)',
-                  }}
+                  style={styles.input}
                 />
               </View>
             </View>
-            <ScrollView style={{ paddingHorizontal: 16 }} showsVerticalScrollIndicator={false}>
+            <ScrollView
+              style={{ paddingHorizontal: 16 }}
+              showsVerticalScrollIndicator={false}
+              onScroll={({ nativeEvent }) => {
+                if (isCloseToBottom(nativeEvent)) {
+                  endScroll('endScroll from modal');
+                }
+              }}
+              scrollEventThrottle={400}
+            >
               {data.map((item) => {
                 return (
                   <TouchableOpacity key={item.id} onPress={() => picked(item)}>
@@ -82,13 +80,27 @@ const styles = StyleSheet.create({
   },
   content: {
     backgroundColor: Color.WHITE,
-    // paddingHorizontal: 16,
     paddingTop: 20,
     borderRadius: 16,
     borderColor: 'rgba(0, 0, 0, 0.1)',
   },
+  header: {
+    paddingHorizontal: 16,
+    paddingBottom: 10,
+    borderBottomWidth: 1,
+    borderColor: Color.NEUTRAL_GRAY,
+  },
   contentTitle: {
     fontSize: 16,
     marginVertical: 12,
+  },
+  input: {
+    borderWidth: 1,
+    borderRadius: 4,
+    borderColor: Color.NEUTRAL_GRAY,
+    paddingVertical: 6,
+    paddingHorizontal: 11,
+    color: '#000',
+    backgroundColor: 'rgba(245, 246, 247, 1)',
   },
 });

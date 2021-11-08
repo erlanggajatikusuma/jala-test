@@ -1,11 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import { Text } from '../../../uikits';
-import Axios from 'axios';
-import { token } from '../../../utils';
-import CardList from '../CardList';
-import Color from '../../../styles/Color';
 import { Button, Gap } from '../..';
+import { API_HOST, getData } from '../../../api';
+import Color from '../../../styles/Color';
+import { Text } from '../../../uikits';
+import CardList from '../CardList';
 
 const Disease = () => {
   const [state, setState] = useState({
@@ -17,31 +16,22 @@ const Disease = () => {
     },
     currentPage: 1,
   });
-  const [url, setUrl] = useState('https://app.jala.tech/api/diseases?per_page=15&page=1');
   const [diseases, setDiseases] = useState([]);
 
   const scrollRef = useRef();
 
   useEffect(() => {
-    getData(url);
-  }, []);
-
-  const getData = (urlLink) => {
-    Axios.get(urlLink, {
-      headers: {
-        Authorization: token,
-      },
-    })
+    getData(API_HOST.diseases, true)
       .then((res) => {
         const resdata = res.data;
-        console.log('SHRIMP DISEASES ===> ', resdata);
+        console.log('PROMISE GET SHRIMP DISEASES ===> ', resdata);
         setDiseases(resdata.data);
         setState({ ...state, links: resdata.links, currentPage: resdata.meta.current_page });
       })
       .catch((err) => {
         console.log('ERR GET DISEASES ==> ', err);
       });
-  };
+  }, []);
 
   const handleButton = (value) => {
     console.log('BUTTON PREV NEXT ===> ', value);

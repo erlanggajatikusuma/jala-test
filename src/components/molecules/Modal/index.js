@@ -15,12 +15,20 @@ import { useHeaderHeight } from '@react-navigation/elements';
 import { Text } from '../../../uikits';
 import Search from './search';
 
-const Modal = ({ show, picked, close, type = 'size', data }) => {
+const Modal = ({ show, picked, close, type = 'size', data, endScroll }) => {
   const { height, width } = useWindowDimensions();
   const headerHeight = useHeaderHeight();
 
   if (type === 'search') {
-    return <Search show={show} close={close} data={data} picked={picked} />;
+    return (
+      <Search
+        show={show}
+        close={close}
+        data={data}
+        picked={picked}
+        endScroll={(val) => endScroll(val)}
+      />
+    );
   }
 
   return (

@@ -1,9 +1,17 @@
 import { useNavigation } from '@react-navigation/core';
 import Axios from 'axios';
-import React, { useEffect, useRef, useState } from 'react';
-import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  Image,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  RefreshControl,
+} from 'react-native';
 import { Card } from '..';
 import { Button, Gap } from '../..';
+import { API_HOST, getData } from '../../../api';
 import { IconBiomass, IconPinpoint } from '../../../assets';
 import Color from '../../../styles/Color';
 import { Text } from '../../../uikits';
@@ -17,36 +25,61 @@ const Price = () => {
       next: '',
       prev: null,
     },
+    link: {},
     currentPage: 1,
+    region: 'Indonesia',
   });
   const [priceList, setPriceList] = useState([]);
   const [size, setSize] = useState(100);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalSearch, setModalSearch] = useState(false);
-  const [url, setUrl] = useState(
-    'https://app.jala.tech/api/shrimp_prices?per_page=15&page=1&with=region,creator&region_id=',
-  );
+  const [listRegion, setListRegion] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
   const navigation = useNavigation();
   const scrollRef = useRef();
 
   useEffect(() => {
-    getData(url);
-  }, []);
-
-  const getData = (urlLink) => {
-    // SET LOADING
-    Axios.get(urlLink)
+    getData(API_HOST.prices)
       .then((res) => {
+        console.log('PROMISE RES PRICES ==> ', res.data);
         const resdata = res.data;
-        console.log('RES PRICE ===> ', res.data);
         setPriceList(resdata.data);
-        setState({ ...state, links: resdata.links, currentPage: resdata.meta.current_page });
+        setListRegion(resdata.data);
+        setState({
+          ...state,
+          links: resdata.links,
+          link: resdata.links,
+          currentPage: resdata.meta.current_page,
+        });
       })
       .catch((err) => {
-        console.log('ERR ===> ', err);
+        console.log('ERR GET PRICES ===> ', err);
       });
-  };
+  }, []);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    getData(API_HOST.prices)
+      .then((res) => {
+        console.log('PROMISE RES PRICES ==> ', res.data);
+        const resdata = res.data;
+        setPriceList(resdata.data);
+        setListRegion(resdata.data);
+        setState({
+          ...state,
+          links: resdata.links,
+          link: resdata.links,
+          currentPage: resdata.meta.current_page,
+          region: 'Indonesia',
+        });
+        setRefreshing(false);
+      })
+      .catch((err) => {
+        console.log('ERR GET PRICES ===> ', err);
+        setRefreshing(false);
+      });
+  }, []);
 
   const pickSize = (value) => {
     setSize(value);
@@ -54,13 +87,24 @@ const Price = () => {
   };
 
   const onFilterRegion = (value) => {
-    const urlId = `https://app.jala.tech/api/shrimp_prices?per_page=15&page=1&with=region,creator&region_id=${value.region.id}`;
-    console.log('REGION ===> ', urlId);
+    const urlId = `${API_HOST.prices}${value.region.id}`;
     console.log('REGION ===> ', value);
     Axios.get(urlId)
       .then((res) => {
         const resdata = res.data;
-        console.log('RES REGION ===> ', res.data);
+        console.log('FILTER REGION ===> ', res.data);
+        setPriceList(resdata.data);
+        setState({
+          ...state,
+          links: resdata.links,
+          currentPage: resdata.meta.current_page,
+          region: value.region.name,
+        });
+        setModalSearch(!modalSearch);
+        scrollRef.current?.scrollTo({
+          y: 0,
+          animated: true,
+        });
       })
       .catch((err) => {
         console.log('ERR ===> ', err);
@@ -74,15 +118,44 @@ const Price = () => {
   const handleButton = (value) => {
     console.log('BUTTON PREV NEXT ===> ', value);
     if (value === 'next') {
-      getData(state.links.next);
+      getData(state.links.next)
+        .then((res) => {
+          const resdata = res.data;
+          setPriceList(resdata.data);
+          setState({ ...state, links: resdata.links, currentPage: resdata.meta.current_page });
+        })
+        .catch((err) => console.log('ERR GET PRICES ===> ', err));
     }
     if (value === 'prev') {
-      getData(state.links.prev);
+      getData(state.links.prev)
+        .then((res) => {
+          const resdata = res.data;
+          setPriceList(resdata.data);
+          setState({ ...state, links: resdata.links, currentPage: resdata.meta.current_page });
+        })
+        .catch((err) => console.log('ERR GET PRICES ===> ', err));
     }
     scrollRef.current?.scrollTo({
       y: 0,
       animated: true,
     });
+  };
+
+  const onEndScroll = (value) => {
+    getData(state.link.next)
+      .then((res) => {
+        console.log('END SCROLL ==> ', res.data);
+        const resdata = res.data;
+        setState({ ...state, link: resdata.links });
+        const newCopy = [...listRegion];
+        resdata.data.map((data) => {
+          newCopy.push(data);
+        });
+        setListRegion(newCopy);
+      })
+      .catch((err) => {
+        console.log('ERR GET PRICES ===> ', err);
+      });
   };
 
   return (
@@ -92,7 +165,11 @@ const Price = () => {
           Harga Terbaru
         </Text>
       </View>
-      <ScrollView ref={scrollRef} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        ref={scrollRef}
+        showsVerticalScrollIndicator={false}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      >
         {priceList.map((item) => {
           return (
             <Card
@@ -144,7 +221,7 @@ const Price = () => {
           <Image source={IconPinpoint} style={{ width: 24, height: 24, marginRight: 12 }} />
           <View>
             <Text size={16} color={Color.WHITE} style={{ fontWeight: '700' }}>
-              Indonesia
+              {state.region}
             </Text>
           </View>
         </TouchableOpacity>
@@ -161,7 +238,8 @@ const Price = () => {
         show={modalSearch}
         close={() => setModalSearch(!modalSearch)}
         picked={(val) => onFilterRegion(val)}
-        data={priceList}
+        data={listRegion}
+        endScroll={(val) => onEndScroll(val)}
       />
     </View>
   );
