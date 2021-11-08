@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import { ScrollView, StyleSheet, View, Linking, Platform, Alert, Image } from 'react-native';
 import { IconVerified } from '../../assets';
-import { Button } from '../../components';
+import { Button, Header } from '../../components';
 import Color from '../../styles/Color';
 import { Text } from '../../uikits';
-import { formatRupiah, getDate, sizes } from '../../utils';
+import { formatRupiah, getDate, handleShare, sizes } from '../../utils';
 
-const Detail = ({ route }) => {
+const Detail = ({ navigation, route }) => {
   const { data } = route.params;
   useEffect(() => {
     console.log('DATA PROPS ===> ', data);
@@ -35,6 +35,11 @@ const Detail = ({ route }) => {
 
   return (
     <View style={styles.page}>
+      <Header
+        title="Harga Udang"
+        back={() => navigation.goBack()}
+        onPress={() => handleShare(`https://app.jala.tech/shrimp_prices/${data.id}`)}
+      />
       <ScrollView>
         {/* HEAD */}
         <View style={styles.head}>
@@ -107,6 +112,14 @@ const Detail = ({ route }) => {
                 </Text>
               </View>
             ))}
+          </View>
+          <View style={{ marginTop: 18, marginBottom: 8 }}>
+            <Text size={16} color={Color.NEUTRAL} style={{ fontWeight: '700' }}>
+              Catatan
+            </Text>
+            <Text color={Color.NEUTRAL}>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit ut aliquam
+            </Text>
           </View>
         </View>
       </ScrollView>

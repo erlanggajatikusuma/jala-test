@@ -20,7 +20,8 @@ const App = () => {
       <Stack.Screen
         name="Detail"
         component={Detail}
-        options={{ header: () => <Header title="Harga Udang" /> }}
+        // options={{ header: () => <Header title="Harga Udang" /> }}
+        options={{ headerShown: false }}
       />
       <Stack.Screen name="NewsDetail" component={NewsDetail} options={{ headerShown: false }} />
       <Stack.Screen

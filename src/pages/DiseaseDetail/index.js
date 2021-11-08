@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Text } from '../../uikits';
 import { WebView } from 'react-native-webview';
 import { Header, Loading } from '../../components';
 import { handleShare } from '../../utils';
